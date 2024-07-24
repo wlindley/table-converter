@@ -4,8 +4,8 @@ import sys
 from typing import List
 
 RANGE_SEPARATORS = "[-–—−]"  # hyphen, endash, emdash, minus
-RANGE_REGEX = f"(\\d+\\s?{RANGE_SEPARATORS}\\s?\\d+\s)"
-SINGLE_REGEX = "(\\d+\s)"
+RANGE_REGEX = f"(\\d+\\s?{RANGE_SEPARATORS}\\s?\\d+\\s)"
+SINGLE_REGEX = "(\\d+\\s)"
 NUMBER_COLUMN_REGEX = f"^({RANGE_REGEX}|{SINGLE_REGEX})"
 
 def convert(input: str) -> str:
