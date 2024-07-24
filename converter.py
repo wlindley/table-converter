@@ -2,10 +2,11 @@
 import re
 import sys
 
+RANGE_SEPARATORS = "-|–|—|−"  # hyphen, endash, emdash, minus
 
 def convert(input: str) -> str:
     output_lines = []
-    output_lines.extend(["", "---"])
+    _add_header_footer(output_lines)
 
     for line in input.split("\n"):
         if _is_markdown(line):
@@ -18,9 +19,12 @@ def convert(input: str) -> str:
         for i in range(_extract_range(columns[0])):
             output_lines.append(columns[1])
     
-    output_lines.extend(["", "---"])
+    _add_header_footer(output_lines)
 
     return "\n".join(output_lines)
+
+def _add_header_footer(output_lines):
+    output_lines.extend(["", "---"])
 
 def _is_markdown(line: str) -> bool:
     return line.startswith("|")
@@ -32,10 +36,10 @@ def _is_header(line: str) -> bool:
     return not re.search("^\\d", line)
 
 def _extract_range(spec: str) -> int:
-    if "-" not in spec:
+    if not re.search(RANGE_SEPARATORS, spec):
         return 1
     
-    indices = [int(t) for t in spec.split("-")]
+    indices = [int(t) for t in re.split(RANGE_SEPARATORS, spec)]
     return indices[1] - indices[0] + 1
 
 if __name__ == "__main__":
