@@ -1,5 +1,6 @@
 
 import re
+import sys
 
 
 def convert(input: str) -> str:
@@ -28,7 +29,7 @@ def _markdown_to_plain(line: str) -> str:
     return line[1:-1].replace("|", " ")
 
 def _is_header(line: str) -> bool:
-    return not re.search("^\d", line)
+    return not re.search("^\\d", line)
 
 def _extract_range(spec: str) -> int:
     if "-" not in spec:
@@ -36,3 +37,8 @@ def _extract_range(spec: str) -> int:
     
     indices = [int(t) for t in spec.split("-")]
     return indices[1] - indices[0] + 1
+
+if __name__ == "__main__":
+    data = sys.stdin.read()
+    output = convert(data)
+    print(output)
