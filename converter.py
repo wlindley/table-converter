@@ -1,8 +1,12 @@
 
 import re
 import sys
+from typing import List
 
-RANGE_SEPARATORS = "-|–|—|−"  # hyphen, endash, emdash, minus
+RANGE_SEPARATORS = "[-–—−]"  # hyphen, endash, emdash, minus
+RANGE_REGEX = f"(\\d+\\s?{RANGE_SEPARATORS}\\s?\\d+\s)"
+SINGLE_REGEX = "(\\d+\s)"
+NUMBER_COLUMN_REGEX = f"^({RANGE_REGEX}|{SINGLE_REGEX})"
 
 def convert(input: str) -> str:
     output_lines = []
@@ -15,7 +19,7 @@ def convert(input: str) -> str:
         if _is_header(line):
             continue
 
-        columns = line.split(maxsplit=1)
+        columns = _split_to_columns(line)
         for i in range(_extract_range(columns[0])):
             output_lines.append(columns[1])
     
@@ -34,6 +38,14 @@ def _markdown_to_plain(line: str) -> str:
 
 def _is_header(line: str) -> bool:
     return not re.search("^\\d", line)
+
+def _split_to_columns(line: str) -> List[str]:
+    m = re.search(NUMBER_COLUMN_REGEX, line)
+    columns = [
+        m.group(0).replace(" ", ""),
+        line.replace(m.group(0), "").strip()
+    ]
+    return columns
 
 def _extract_range(spec: str) -> int:
     if not re.search(RANGE_SEPARATORS, spec):

@@ -137,7 +137,32 @@ Trap designed to kill or capture creatures
 Observation room, allowing guards or spectators to observe creatures moving through the dungeon
 
 ---"""
+        self.assertEqual(actual, expected)
 
+    def test_handles_spaces_in_ranges(self):
+        input = """d20	Purpose
+1- 2	One
+3	Two
+4 - 6	Three
+7	Four
+8	Five
+9 -10	Six"""
+        actual = convert(input)
+        expected = """
+---
+One
+One
+Two
+Three
+Three
+Three
+Four
+Five
+Six
+Six
+
+---"""
+        self.assertEqual(actual, expected)
 
 if __name__ == "__main__":
     unittest.main()
