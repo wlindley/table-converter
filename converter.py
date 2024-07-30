@@ -24,7 +24,6 @@ def convert(input: str) -> str:
             output_lines.append(columns[1])
     
     _add_header_footer(output_lines)
-
     return "\n".join(output_lines)
 
 def _add_header_footer(output_lines):
@@ -54,7 +53,26 @@ def _extract_range(spec: str) -> int:
     indices = [int(t) for t in re.split(RANGE_SEPARATORS, spec)]
     return indices[1] - indices[0] + 1
 
+def convert_single_words(input: str) -> str:
+    output_lines = []
+    _add_header_footer(output_lines)
+
+    for line in input.split():
+        if _is_only_number(line):
+            continue
+        output_lines.append(line)
+
+    _add_header_footer(output_lines)
+    return "\n".join(output_lines)
+
+def _is_only_number(line: str) -> bool:
+    return re.search("^\\d+.?$", line)
+
 if __name__ == "__main__":
     data = sys.stdin.read()
-    output = convert(data)
+
+    if len(sys.argv) == 2 and sys.argv[1] == "single":
+        output = convert_single_words(data)
+    else:
+        output = convert(data)
     print(output)

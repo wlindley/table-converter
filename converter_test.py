@@ -1,7 +1,7 @@
 
 import unittest
 
-from converter import convert
+from converter import convert, convert_single_words
 
 
 class TableConverterTest(unittest.TestCase):
@@ -160,6 +160,26 @@ Four
 Five
 Six
 Six
+
+---"""
+        self.assertEqual(actual, expected)
+
+class SingleWordTableTest(unittest.TestCase):
+    def test_single_word_rows_converted_to_table(self):
+        input = """1. One 2. Two 3. Three 4. Four 5. Five 6. Six 7. Seven 8. Eight 9. Nine 10. Ten"""
+        actual = convert_single_words(input)
+        expected = """
+---
+One
+Two
+Three
+Four
+Five
+Six
+Seven
+Eight
+Nine
+Ten
 
 ---"""
         self.assertEqual(actual, expected)
