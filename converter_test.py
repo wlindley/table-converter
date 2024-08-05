@@ -1,14 +1,12 @@
 
+import os
+from pathlib import Path
 import unittest
 
-from converter import convert, convert_single_words
+from converter import convert, convert_single_words, copy_encounter_tables
 
 
 class TableConverterTest(unittest.TestCase):
-    def setUp(self) -> None:
-        super().setUp()
-    
-    
     def test_converts_plaintext_table_with_single_entries(self):
         input = """d20	Purpose
 1	One
@@ -183,6 +181,39 @@ Ten
 
 ---"""
         self.assertEqual(actual, expected)
+
+class EncounterTablesTest(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        os.chdir("test-data")
+
+    def tearDown(self) -> None:
+        super().tearDown()
+        os.chdir("..")
+
+    def test_encounters_copies_files_with_replacements(self):
+        copy_encounter_tables("Forest", "Coastal")
+        self.assertFileContents("Coastal - Easy.md", """
+---
+{Ref/Monster_Coastal/CR1_8}, 2x {Ref/Monster_Coastal/CR0}
+{Ref/Monster_Coastal/CR1_4}, {Ref/Monster_Coastal/CR0}
+{Ref/Monster_Coastal/CR1_2}
+
+---""")
+        self.assertFileContents("Coastal - Medium.md", """
+---
+{Ref/Monster_Coastal/CR1_4}, 2x {Ref/Monster_Coastal/CR1_8}
+2x {Ref/Monster_Coastal/CR1_8}, {Ref/Monster_Coastal/CR1_4}
+{Ref/Monster_Coastal/CR1}
+
+---""")
+        
+    def assertFileContents(self, filename: str, file_contents: str) -> None:
+        p = Path(filename)
+        self.assertTrue(p.is_file(), f"File {filename} does not exist, but expected it to")
+        with p.open() as f:
+            contents = f.read()
+            self.assertEqual(contents, file_contents, f"Contents of file {filename} don't match what was expected")
 
 if __name__ == "__main__":
     unittest.main()

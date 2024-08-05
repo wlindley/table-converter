@@ -1,4 +1,5 @@
 
+from pathlib import Path
 import re
 import sys
 from typing import List
@@ -67,6 +68,17 @@ def convert_single_words(input: str) -> str:
 
 def _is_only_number(line: str) -> bool:
     return re.search("^\\d+.?$", line)
+
+def copy_encounter_tables(src: str, dst: str) -> None:
+    dir = Path(".")
+    paths = list(dir.glob(f"*{src}*"))
+    for p in paths:
+        dst_name = p.name.replace(src, dst)
+        with open(p.name, "r") as src_file:
+            with open(dst_name, "w") as dst_file:
+                contents = src_file.read()
+                contents = contents.replace(src, dst)
+                dst_file.write(contents)
 
 if __name__ == "__main__":
     data = sys.stdin.read()
