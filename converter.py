@@ -70,21 +70,29 @@ def _is_only_number(line: str) -> bool:
     return re.search("^\\d+.?$", line)
 
 def copy_encounter_tables(src: str, dst: str) -> None:
+    filenames = _get_local_files_containing(src)
+    for src_name in filenames:
+        dst_name = src_name.replace(src, dst)
+        _copy_and_replace_contents(src_name, dst_name, src, dst)
+
+def _get_local_files_containing(src: str) -> List[str]:
     dir = Path(".")
-    paths = list(dir.glob(f"*{src}*"))
-    for p in paths:
-        dst_name = p.name.replace(src, dst)
-        with open(p.name, "r") as src_file:
-            with open(dst_name, "w") as dst_file:
-                contents = src_file.read()
-                contents = contents.replace(src, dst)
-                dst_file.write(contents)
+    return [p.name for p in dir.glob(f"*{src}*")]
+
+def _copy_and_replace_contents(src_name: str, dst_name: str, src: str, dst: str) -> None:
+    with open(src_name, "r") as src_file:
+        with open(dst_name, "w") as dst_file:
+            contents = src_file.read()
+            contents = contents.replace(src, dst)
+            dst_file.write(contents)
 
 if __name__ == "__main__":
     data = sys.stdin.read()
 
     if len(sys.argv) == 2 and sys.argv[1] == "single":
         output = convert_single_words(data)
+    if len(sys.argv) >= 4 and sys.argv[1] == "encounter":
+        copy_encounter_tables(sys.argv[2], sys.argv[3])
     else:
         output = convert(data)
     print(output)
