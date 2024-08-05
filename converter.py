@@ -87,12 +87,16 @@ def _copy_and_replace_contents(src_name: str, dst_name: str, src: str, dst: str)
             dst_file.write(contents)
 
 if __name__ == "__main__":
-    data = sys.stdin.read()
-
     if len(sys.argv) == 2 and sys.argv[1] == "single":
+        data = sys.stdin.read()
         output = convert_single_words(data)
+        print(output)
     if len(sys.argv) >= 4 and sys.argv[1] == "encounter":
         copy_encounter_tables(sys.argv[2], sys.argv[3])
-    else:
+    elif len(sys.argv) == 1:
+        data = sys.stdin.read()
         output = convert(data)
-    print(output)
+        print(output)
+    else:
+        print(f"Unknown options for {sys.argv}")
+    
